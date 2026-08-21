@@ -36,6 +36,10 @@ class ReduceImpl<BackendType::kOmpi, device_type> {
 
     MPI_Datatype mpi_type = DataTypeToOmpiType(data_type);
     MPI_Op mpi_op = RedOpToOmpiOp(op);
+    if (mpi_type == MPI_BYTE) {
+      LOG("Data type is not supported by OpenMPI reductions for `Reduce`.");
+      return ReturnStatus::kNotSupported;
+    }
 
     if (count > static_cast<size_t>(std::numeric_limits<int>::max())) {
       LOG("`count` exceeds MPI int range for `Reduce`.");
